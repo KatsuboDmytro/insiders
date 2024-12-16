@@ -76,15 +76,6 @@ export const Signup: React.FC = () => {
 					<GoogleIcon />
 					Увійти за допомогою Google
 				</Button>
-				<Button
-					type='submit'
-					variant='contained'
-					color='primary'
-					fullWidth
-					sx={{ mt: 2 }}
-					onClick={handleLogout}>
-					Log out
-				</Button>
 			</Box>
 		</Container>
 	)

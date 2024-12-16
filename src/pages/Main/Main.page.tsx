@@ -5,7 +5,6 @@ import { db } from '../../config/firebase'
 import useNotification from '../../app/useNotification'
 import './dashboard.css';
 import './nav.css';
-import { Navigation, UserInfo } from '../../components'
 import { Box, Typography } from '@mui/material';
 import { setTodos } from '../../features/todosSlice'
 import { useAppDispatch } from '../../app/hooks'

@@ -1,13 +1,11 @@
 import './App.css';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navigation, UserInfo } from './components';
-import { useAuth } from './app/useAuth';
+import { useAppSelector } from './app/hooks';
 
 function App() {
-  const { isAuthenticated } = useAuth({});
+  const { user } = useAppSelector((state) => state.auth);
   const location = useLocation();
-
-  // Define the paths where only the Outlet should be displayed
   const hiddenPaths = ['/login', '/signup'];
   const shouldHideLayout = hiddenPaths.includes(location.pathname);
 
@@ -20,7 +18,7 @@ function App() {
             <Navigation />
             <div className="dashboard__content">
               <UserInfo />
-              {isAuthenticated ? (
+              {user ? (
                 <Outlet />
               ) : (
                 <div>You may firstly auth...</div>

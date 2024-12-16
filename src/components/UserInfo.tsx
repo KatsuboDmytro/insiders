@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 
 export const UserInfo: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const { handleLogout, isAuthenticated } = useAuth({});
+  const { handleLogout } = useAuth({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -40,7 +40,7 @@ export const UserInfo: React.FC = () => {
         alignSelf: 'flex-end',
       }}
     >
-      {isAuthenticated ? (
+      {user ? (
         <>
           <TextField
             variant="outlined"
@@ -61,9 +61,9 @@ export const UserInfo: React.FC = () => {
           />
           <IconButton edge="end" sx={{ ml: 2 }} onClick={handleAvatarClick}>
             <Avatar
-              src={user?.img || undefined} // Ensure a fallback if no img is provided
-              alt={user?.name || 'User'}    // Fallback to the user's name
-              sx={{ width: 40, height: 40 }} // Set size for the avatar
+              src={user?.img || undefined}
+              alt={user?.name || 'User'}
+              sx={{ width: 40, height: 40 }}
             />
           </IconButton>
 
