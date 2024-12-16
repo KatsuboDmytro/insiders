@@ -89,8 +89,8 @@ export const UserInfo: React.FC = () => {
                 variant="contained"
                 color="error"
                 fullWidth
-                onClick={() => {
-                  handleLogout();
+                onClick={(event) => {
+                  handleLogout(event);
                   handleClose();
                 }}
               >
