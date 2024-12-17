@@ -14,7 +14,7 @@ export const Signup: React.FC = () => {
 	const theme = useTheme()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const { handleSignup, handleSignupWithGoogle, handleLogout } = useAuth({
+	const { handleSignup, handleSignupWithGoogle } = useAuth({
 		email,
 		password,
 	})

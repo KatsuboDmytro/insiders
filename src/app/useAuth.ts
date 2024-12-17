@@ -10,9 +10,11 @@ import { useEffect, useCallback } from 'react';
 import useNotification from './useNotification';
 import { setUser } from '../features/authSlice';
 import { useAppDispatch } from './hooks';
-import { auth, googleProvider } from '../config/firebase';
+import { auth, googleProvider, db } from '../config/firebase';
 import { accessTokenService } from '../services/access/accessTokenService';
 import { useNavigate } from 'react-router-dom';
+import { setTodoList } from '../features/listSlice';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 
 interface AuthProps {
 	email?: string;
@@ -24,6 +26,26 @@ export const useAuth = ({ email, password }: AuthProps) => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
+	const saveUserToDB = async (user: any) => {
+		try {
+			const userRef = doc(db, 'users', user.userId);
+			await setDoc(userRef, user, { merge: true });
+		} catch (error) {
+			console.error('Error saving user to Firestore:', error);
+		}
+  };
+  
+  const getAllUsers = useCallback(async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      const usersList = querySnapshot.docs.map((doc) => doc.data());
+      return usersList;
+    } catch (error) {
+      console.error("Error fetching users from Firestore:", error);
+      return [];
+    }
+  }, []);
+
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
@@ -32,6 +54,7 @@ export const useAuth = ({ email, password }: AuthProps) => {
 					email: user.email || '',
 					img: user.photoURL || '',
 					name: user.displayName || 'Guest',
+					userId: user.uid,
 				};
 				dispatch(setUser(userData));
 				accessTokenService.save(token);
@@ -57,8 +80,10 @@ export const useAuth = ({ email, password }: AuthProps) => {
 					email: userCredential.user.email || '',
 					img: userCredential.user.photoURL || '',
 					name: userCredential.user.displayName || 'Guest',
+					userId: userCredential.user.uid,
 				};
 				dispatch(setUser(user));
+				await saveUserToDB(user);
 				const token = await userCredential.user.getIdToken();
 				accessTokenService.save(token);
 				navigate('/');
@@ -77,8 +102,10 @@ export const useAuth = ({ email, password }: AuthProps) => {
 				email: userCredential.user.email || '',
 				img: userCredential.user.photoURL || '',
 				name: userCredential.user.displayName || 'Guest',
+				userId: userCredential.user.uid,
 			};
 			dispatch(setUser(user));
+			await saveUserToDB(user);
 			const token = await userCredential.user.getIdToken();
 			accessTokenService.save(token);
 			navigate('/');
@@ -101,6 +128,7 @@ export const useAuth = ({ email, password }: AuthProps) => {
 					email: userCredential.user.email || '',
 					img: userCredential.user.photoURL || '',
 					name: userCredential.user.displayName || 'Guest',
+					userId: userCredential.user.uid,
 				};
 				dispatch(setUser(user));
 				const token = await userCredential.user.getIdToken();
@@ -121,8 +149,10 @@ export const useAuth = ({ email, password }: AuthProps) => {
 				email: userCredential.user.email || '',
 				img: userCredential.user.photoURL || '',
 				name: userCredential.user.displayName || 'Guest',
+				userId: userCredential.user.uid,
 			};
 			dispatch(setUser(user));
+			await saveUserToDB(user);
 			const token = await userCredential.user.getIdToken();
 			accessTokenService.save(token);
 			navigate('/');
@@ -137,7 +167,7 @@ export const useAuth = ({ email, password }: AuthProps) => {
 			e.preventDefault();
 			try {
 				await signOut(auth);
-				dispatch(setUser(null));
+				dispatch(setTodoList([]));
 				accessTokenService.remove();
 				navigate('/login');
 				showSuccess('Log out successful');
@@ -150,6 +180,7 @@ export const useAuth = ({ email, password }: AuthProps) => {
 
 	return {
 		handleSignup,
+    getAllUsers,
 		handleSignupWithGoogle,
 		handleLogin,
 		handleGoogleLogin,

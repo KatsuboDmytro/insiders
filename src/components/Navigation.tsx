@@ -11,7 +11,7 @@ export const Navigation: React.FC = () => {
 
   const buttons = [
     { key: 'one', to: '/', route: 'Statiscs' },
-    { key: 'two', to: '/all-todos', route: 'All todos' },
+    { key: 'two', to: '/list', route: 'All lists' },
   ];
 
   return (
